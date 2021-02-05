@@ -155,7 +155,7 @@ void NativeBleInternal::dispose() {}
 void NativeBleInternal::async_thread_function() {
     while (async_thread_active) {
         bluez_service.run_async();
-        std::this_thread::sleep_for(std::chrono::microseconds(50));
+        std::this_thread::sleep_for(std::chrono::microseconds(5000));
     }
 }
 

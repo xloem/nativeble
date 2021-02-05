@@ -4,6 +4,7 @@
 #include <string>
 #include <csignal>
 #include <thread>
+#include <future>
 
 #define SCAN_TIMEOUT_MS 5000
 
@@ -46,8 +47,10 @@ int main() {
         std::cout << "Disconnected: " << msg << std::endl;
         return;
     };
-    ble_events.callback_on_device_connected = []() {
+    std::promise<void> connected;
+    ble_events.callback_on_device_connected = [&connected]() {
         std::cout << "Connected" << std::endl;
+        connected.set_value();
     };
     ble_events.callback_on_scan_found = [&](NativeBLE::DeviceDescriptor device) {
         static int i = 1;
@@ -81,7 +84,18 @@ int main() {
         exit(-1);
     }
     
-    ble.connect(devices[device].address);
+    */
+    std::cout << "connecting" << std::endl;
+    //ble.connect(devices[device].address);
+    ble.connect("00:55:DA:BB:1C:52");
+
+    //connected.get_future().get();
+
+    std::cout << "connected to 00:55:DA:BB:1C:52" << std::endl;
+
+    //std::this_thread::sleep_for(std::chrono::milliseconds(5000));
+
+    std::cout << "notifying" << std::endl;
 
     // Setup notify for when data is received
     ble.notify(NORDIC_UART_SERVICE_UUID, NORDIC_UART_CHAR_TX, [&](const uint8_t* data, uint32_t length) {
